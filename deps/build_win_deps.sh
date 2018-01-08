@@ -22,6 +22,9 @@ echo "${PT_PACKAGE_FILE_SHA256}  ${PT_PACKAGE_FILE}" > $PT_CHECKSUM_FILE
 sha256sum -c $PT_CHECKSUM_FILE
 rm $PT_CHECKSUM_FILE
 
+rm -rf pthread-win32
+git clone https://github.com/GerHobbelt/pthread-win32.git
+
 tar zxvf $CURL_PACKAGE_FILE
 tar zxvf $PT_PACKAGE_FILE
 
@@ -29,7 +32,8 @@ cd $CURL_PACKAGE
 ./configure --host=x86_64-w64-mingw32 --disable-shared --enable-static --with-winssl --prefix=$PREFIX
 make install
 
-cd ../${PT_PACKAGE}/
+#cd ../${PT_PACKAGE}/
+cd ../pthread-win32/
 cp config.h pthreads_win32_config.h
 make -f GNUmakefile CROSS="x86_64-w64-mingw32-" clean GC-static
 cp libpthreadGC2.a ${PREFIX}/lib/libpthread.a
