@@ -78,12 +78,19 @@ static inline void affine_to_cpu(int id, int cpu)
 	cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(cpuset_t), &set);
 }
 #else
+#include <pthread.h>
 static inline void drop_policy(void)
 {
 }
 
 static inline void affine_to_cpu(int id, int cpu)
 {
+	 cpu_set_t set;
+	 CPU_ZERO(&set);
+	 CPU_SET(cpu, &set);
+
+	 pthread_t thr = pthread_self();
+	 pthread_setaffinity_np(thr, sizeof(cpu_set_t), &set);
 }
 #endif
 
@@ -1127,6 +1134,12 @@ static void *miner_thread(void *userdata)
 
 	/* Cpu affinity only makes sense if the number of threads is a multiple
 	 * of the number of CPUs */
+	if (num_processors > 1 && opt_n_threads <= (num_processors/2)) {
+	if (!opt_quiet)
+	applog(LOG_INFO, "Binding thread %d to cpu %d",
+	thr_id, thr_id * 2);
+	affine_to_cpu(thr_id, thr_id * 2);
+	} else
 	if (num_processors > 1 && opt_n_threads % num_processors == 0) {
 		if (!opt_quiet)
 			applog(LOG_INFO, "Binding thread %d to cpu %d",
