@@ -1119,10 +1119,14 @@ static void *miner_thread(void *userdata)
 	int thr_id = mythr->id;
 	struct work work = {{0}};
 	uint32_t max_nonce;
-	uint32_t end_nonce = 0xffffffffU / opt_n_threads * (thr_id + 1) - 0x20;
+	uint32_t end_nonce = 0xffffffffU / opt_n_threads * (thr_id + 1);
 	unsigned char *scratchbuf = NULL;
 	char s[16];
 	int i;
+	
+	if(opt_n_thread == (thr_id + 1)){
+	end_nonce = 0xffffffffU;
+	}
 
 	/* Set worker threads to nice 19 and then preferentially to SCHED_IDLE
 	 * and if that fails, then SCHED_BATCH. No need for this to be an
