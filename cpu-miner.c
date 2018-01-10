@@ -1124,7 +1124,7 @@ static void *miner_thread(void *userdata)
 	char s[16];
 	int i;
 	
-	if(opt_n_thread == (thr_id + 1)){
+	if(opt_n_threads == (thr_id + 1)){
 	end_nonce = 0xffffffffU;
 	}
 
