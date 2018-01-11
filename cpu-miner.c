@@ -78,19 +78,12 @@ static inline void affine_to_cpu(int id, int cpu)
 	cpuset_setaffinity(CPU_LEVEL_WHICH, CPU_WHICH_TID, -1, sizeof(cpuset_t), &set);
 }
 #else
-#include <pthread.h>
 static inline void drop_policy(void)
 {
 }
 
 static inline void affine_to_cpu(int id, int cpu)
 {
-	 cpu_set_t set;
-	 CPU_ZERO(&set);
-	 CPU_SET(cpu, &set);
-
-	 pthread_t thr = pthread_self();
-	 pthread_setaffinity_np(thr, sizeof(cpu_set_t), &set);
 }
 #endif
 
